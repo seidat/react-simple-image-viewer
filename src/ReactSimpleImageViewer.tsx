@@ -13,9 +13,12 @@ interface IState {
 }
 
 export default class ReactSimpleImageViewer extends React.Component<IProps, IState> {
+  imageRef: React.RefObject<HTMLImageElement>;
+
   constructor(props: IProps) {
     super(props);
 
+    this.imageRef = React.createRef();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
@@ -34,6 +37,14 @@ export default class ReactSimpleImageViewer extends React.Component<IProps, ISta
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('wheel', this.handleWheel);
+  }
+
+  componentDidMount() {
+    const image = this.imageRef.current;
+    if(image && image.complete) {
+      image.style.backgroundColor = 'white';
+      image.style.backgroundImage = `url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMzggNzkuMTU5ODI0LCAyMDE2LzA5LzE0LTAxOjA5OjAxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+IEmuOgAAAC5JREFUKJFjZGBgMGbAAv7//38WmzgTNkF8YDhoYPz//z92CUZGrKE3CP1Aew0AglIHR56J6mgAAAAASUVORK5CYII=')`;
+    }
   }
 
   private changeImage(direction: number) {
@@ -110,7 +121,7 @@ export default class ReactSimpleImageViewer extends React.Component<IProps, ISta
 
         <Content className="react-simple-image-viewer__modal-content">
           <Slide className="react-simple-image-viewer__slide">
-            <Image src={src[currentIndex]} alt=""/>
+            <Image src={src[currentIndex]} alt="" ref={this.imageRef} />
           </Slide>
         </Content>
       </Wrapper>
